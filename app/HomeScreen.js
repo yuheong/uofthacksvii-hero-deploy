@@ -7,7 +7,8 @@ const io = require('socket.io-client');
 const webhook = 'https://webhook.site/a8d20ff2-ff0b-4aa1-b9cd-1b6f3db41d21';
 
 // Replace this URL with your own, if you want to run the backend locally!
-const SocketEndpoint = 'http://e9dc4c18.ngrok.io';
+const ngrok = 'http://e9dc4c18.ngrok.io'
+const SocketEndpoint = 'https://swift-area-265607.appspot.com';
 
 export default class HomeScreen extends React.Component {
   static navigationOptions = {
@@ -19,12 +20,12 @@ export default class HomeScreen extends React.Component {
     data: null,
     needHelp: false,
     aedCoordinate: {
-      latitude: 43.6548,
-      longitude: -79.3942
+      latitude: 43.6461039,
+      longitude: -79.3886814
     },
     victimCoordinate: {
-      latitude: 0.000,
-      longitude: -79.3942
+      latitude: 43.6458709,
+      longitude: -79.3898179
     },
   };
   componentDidMount() {
@@ -52,25 +53,15 @@ export default class HomeScreen extends React.Component {
     return (
       <View style={{ flex: 1 }}>
         <View style={styles.header}>
-          <Image source={require('./images/Hero_Logo.png')} />
+          <Image source={require('./images/hero_deploy.png')} />
         </View>
-        <View style={styles.container}>
-          <Text>connected: {this.state.isConnected ? 'true' : 'false'}</Text>
-          {this.state.data &&
-            <Text>
-              ping response: {this.state.data}
-            </Text>}
-          <TouchableOpacity style={styles.button}
-            onPress={this._showAlert}>
-            <Text style={{ fontSize: 14, color: 'black' }}>Show Alert!</Text>
-          </TouchableOpacity>
-        </View>
+        
         <View style={{ flex: 6 }}>
           <MapView provider={PROVIDER_GOOGLE} style={styles.mapStyle} initialRegion={toRegion} showsUserLocation={false}>
             <Marker coordinate={responderCoordinates} icon={require('./images/currlocation.png')} />
-            {this.state.needHelp && <Marker coordinate={this.state.victimCoordinate} title={marker.title} image={require('./images/cross.png')} description={marker.description} />}
+            {this.state.needHelp &&<Marker coordinate={this.state.victimCoordinate} title={marker.title} image={require('./images/cross.png')} description={marker.description} />}
             <Marker coordinate={this.state.aedCoordinate} title={aed.title} icon={require('./images/aed.png')} />
-            <Polyline coordinates={guideCoordinates} strokeWidth={2} strokeColor="#000" strokeColors={[	'#7F0000', '#B24112',	'#E5845C', '#238C23' ]}/>
+            {this.state.needHelp &&<Polyline coordinates={this.coords} strokeWidth={2} strokeColor="#5B80D8" strokeColors={[	'#7F0000', '#B24112',	'#E5845C', '#238C23' ]}/>}
           </MapView>
         </View>
       </View>
@@ -97,7 +88,7 @@ export default class HomeScreen extends React.Component {
           }
         },
         {
-          text: 'Let him/her die',
+          text: "Sorry, I can't make it.",
           onPress: () => {
             console.log('Cancel Pressed')
             fetch(webhook, {
@@ -114,6 +105,13 @@ export default class HomeScreen extends React.Component {
       { cancelable: false }
     );
   }
+
+  coords = [
+    { latitude: 43.645419, longitude: -79.389306 },
+    { latitude: 43.645660, longitude: -79.388735 },
+    this.state.aedCoordinate,
+    this.state.victimCoordinate
+  ]
 }
 
 const styles = StyleSheet.create({
@@ -136,10 +134,10 @@ const styles = StyleSheet.create({
 });
 
 const toRegion = {
-  latitude: 43.649542,
-  longitude: -79.392195,
-  latitudeDelta: 0.02,
-  longitudeDelta: 0.02,
+  latitude: 43.642542,
+  longitude: -79.391195,
+  latitudeDelta: 0.016,
+  longitudeDelta: 0.016,
 }
 
 const marker = {
@@ -155,11 +153,4 @@ const aed = {
   title: "AED",
 }
 
-const responderCoordinates = { latitude: 43.6456224, longitude: -79.390698 }
-
-const guideCoordinates = [
-  //{ latitude: 43.6489928, longitude: -79.3947052 },
-  { latitude: 43.6458709, longitude: -79.3898179 },
-  { latitude: 43.6487485, longitude: -79.3932369 },
-  { latitude: 43.6548, longitude: -79.3942 }
-];
+const responderCoordinates = { latitude: 43.645349, longitude: -79.389306 }
