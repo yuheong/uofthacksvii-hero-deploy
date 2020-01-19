@@ -14,15 +14,15 @@ app.post('/alert', function(req, res){
   let time = new Date().getTime();
   data = {
     victim_coordinates: { latitude: 43.6458709, longitude: -79.3898179 },
-    aed_coordinates: { latitude: 43.6487485, longitude: -79.3932369 },
-    responder_coordinates: { latitude: 43.6489928, longitude: -79.3947052 },
+    aed_coordinates: { latitude: 43.6461039, longitude: -79.3886814 },
+    responder_coordinates: { latitude: 43.6456224, longitude: -79.390698 },
     from_total: {
-      distance: { text: "0.7 km", value: 739 },
-      duration: { text: "10 mins", value: 585 }
+      "distance": 872,
+      "duration": 633
     },
     from_victim: {
-      distance: { text: "0.7 km", value: 739 },
-      duration: { text: "10 mins", value: 585 }
+      "distance": 76,
+      "duration": 57
     }
   }
   console.log('sending data: ', data);

@@ -1,7 +1,7 @@
 import Expo from 'expo';
 import React from 'react';
 import { StyleSheet, Text, View, Dimensions, Image, Alert, TouchableOpacity } from 'react-native';
-import MapView, {Marker, PROVIDER_GOOGLE} from 'react-native-maps';
+import MapView, { Marker, PROVIDER_GOOGLE, Polyline } from 'react-native-maps';
 
 const io = require('socket.io-client');
 const webhook = 'https://webhook.site/a8d20ff2-ff0b-4aa1-b9cd-1b6f3db41d21';
@@ -13,7 +13,7 @@ export default class HomeScreen extends React.Component {
   static navigationOptions = {
     headerShown: false
   }
-  
+
   state = {
     isConnected: false,
     data: null,
@@ -37,7 +37,7 @@ export default class HomeScreen extends React.Component {
     });
 
     socket.on('alert', data => {
-      this.setState({ 
+      this.setState({
         data: data.time,
         needHelp: true,
         aedCoordinate: data.aed_coordinates,
@@ -66,9 +66,11 @@ export default class HomeScreen extends React.Component {
           </TouchableOpacity>
         </View>
         <View style={{ flex: 6 }}>
-          <MapView provider={PROVIDER_GOOGLE} style={styles.mapStyle} initialRegion={toRegion} showsUserLocation={true}>
-            {this.state.needHelp && <Marker coordinate={this.state.victimCoordinate} title={marker.title} image={require('./images/cross.png')} description="Suspected cardiac arrest" />}
+          <MapView provider={PROVIDER_GOOGLE} style={styles.mapStyle} initialRegion={toRegion} showsUserLocation={false}>
+            <Marker coordinate={responderCoordinates} icon={require('./images/currlocation.png')} />
+            {this.state.needHelp && <Marker coordinate={this.state.victimCoordinate} title={marker.title} image={require('./images/cross.png')} description={marker.description} />}
             <Marker coordinate={this.state.aedCoordinate} title={aed.title} icon={require('./images/aed.png')} />
+            <Polyline coordinates={guideCoordinates} strokeWidth={2} strokeColor="#000" strokeColors={[	'#7F0000', '#B24112',	'#E5845C', '#238C23' ]}/>
           </MapView>
         </View>
       </View>
@@ -81,7 +83,8 @@ export default class HomeScreen extends React.Component {
       'Nearby casualty!',
       'Someone needs help! Ambulances are enroute. Please assist.',
       [
-        { text: 'Acknowledge',
+        {
+          text: 'Acknowledge',
           onPress: () => {
             console.log('Ask me later pressed')
             fetch(webhook, {
@@ -121,7 +124,7 @@ const styles = StyleSheet.create({
     justifyContent: 'flex-end',
   },
   container: {
-    flex: 1,
+    flex: 0,
     backgroundColor: '#fff',
     alignItems: 'center',
     justifyContent: 'center',
@@ -145,12 +148,18 @@ const marker = {
     longitude: -79.3932
   },
   title: "42-year old Male",
+  description: "Suspected cardiac arrest"
 }
 
 const aed = {
-  coordinate: {
-    latitude: 43.6548,
-    longitude: -79.3942
-  },
   title: "AED",
 }
+
+const responderCoordinates = { latitude: 43.6456224, longitude: -79.390698 }
+
+const guideCoordinates = [
+  //{ latitude: 43.6489928, longitude: -79.3947052 },
+  { latitude: 43.6458709, longitude: -79.3898179 },
+  { latitude: 43.6487485, longitude: -79.3932369 },
+  { latitude: 43.6548, longitude: -79.3942 }
+];
